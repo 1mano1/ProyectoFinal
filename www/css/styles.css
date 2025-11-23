@@ -1,0 +1,308 @@
+* {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f3f4f6;
+    color: #111827;
+}
+
+/* ------------------ VISTAS ------------------ */
+
+.view {
+    display: none;
+    min-height: 100vh;
+}
+
+.view.active {
+    display: block;
+}
+
+/* ------------------ LOGIN ------------------ */
+
+.card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.08),
+        0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.card-login {
+    max-width: 420px;
+    margin: 40px auto;
+}
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+h2 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 18px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* INPUTS GENERALES */
+input[type="email"],
+select {
+    width: 100%;
+    padding: 9px 11px;
+    margin-top: 4px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background: #f9fafb;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+input[type="email"]:focus,
+select:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
+    background: #ffffff;
+}
+
+/* 🔥 FIX: ESTILO UNIFICADO PARA PASSWORD Y TEXT */
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    width: 100%;
+    padding: 9px 11px;
+    margin-top: 4px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background: #f9fafb;
+    padding-right: 40px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.password-wrapper input[type="password"]:focus,
+.password-wrapper input[type="text"]:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
+    background: #ffffff;
+}
+
+/* Mostrar/ocultar contraseña */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icon-button {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border-radius: 999px;
+    border: none;
+    padding: 4px 6px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.icon-button:active {
+    transform: scale(0.95);
+}
+
+.hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.remember-row {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.remember-row input {
+    margin-right: 6px;
+}
+
+button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary {
+    width: 100%;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(249, 115, 22, 0.45);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+    font-weight: 500;
+}
+
+.btn-secondary:active {
+    transform: translateY(1px);
+}
+
+/* Alertas */
+.alert {
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.alert.error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ------------------ LAYOUT APP ------------------ */
+
+.app-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.app-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.app-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.app-subtitle {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.app-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 12px;
+}
+
+.role-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: #f97316;
+    color: #fff7ed;
+    margin-top: 2px;
+}
+
+/* Menú superior */
+.main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.nav-btn {
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    border: 1px solid transparent;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.nav-btn.active {
+    background: #111827;
+    color: #f9fafb;
+    border-color: #111827;
+}
+
+/* Contenido */
+.app-main {
+    padding: 20px;
+}
+
+.card-wide {
+    max-width: 720px;
+    margin: 20px auto;
+}
+
+.module-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .app-header {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+
+    .app-header-right {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .user-info {
+        align-items: flex-start;
+    }
+
+    .card-login {
+        margin-top: 24px;
+    }
+}
