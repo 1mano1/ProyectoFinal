@@ -193,48 +193,32 @@ function handleLogout() {
 
 function handleModuleClick(event) {
     const moduleKey = event.currentTarget.getAttribute('data-module');
-    const moduleTitle = document.getElementById('module-title');
-    const moduleMessage = document.getElementById('module-message');
 
     // Marcar botón activo
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    let nombreModulo = '';
-    switch (moduleKey) {
-        case 'mesas':
-            nombreModulo = 'Mesas';
-            break;
-        case 'pedidos':
-            nombreModulo = 'Pedidos';
-            break;
-        case 'cuentas':
-            nombreModulo = 'Cuentas / Cierre de cuentas';
-            break;
-        case 'reportes':
-            nombreModulo = 'Reportes';
-            break;
-        case 'configuracion':
-            nombreModulo = 'Configuración';
-            break;
-        default:
-            nombreModulo = 'Módulo';
-    }
+    // Ocultar todas las secciones de módulos estáticos
+    document.querySelectorAll('.module-section').forEach(section => {
+        section.classList.add('hidden');
+    });
 
-    // Actualizar título y mensaje si existen en el DOM (no se encuentran tras
-    // reemplazar `main.innerHTML` en algunos módulos).
-    if (moduleTitle) {
-        moduleTitle.textContent = nombreModulo;
-    }
-    if (moduleMessage) {
-        moduleMessage.textContent =
-            `Seleccionaste el módulo: ${nombreModulo}. ` +
-            'Esta sección será desarrollada en otros apartados del proyecto.';
-    }
-
-    // Renderizar el contenido completo del módulo (si existe una implementación)
-    if (typeof loadModule === 'function') {
-        loadModule(moduleKey);
+    // Verificar si existe una sección estática para este módulo
+    const moduleSection = document.getElementById(`mod-${moduleKey}`);
+    
+    if (moduleSection) {
+        // Módulo estático (reportes, cuentas, config)
+        moduleSection.classList.remove('hidden');
+        
+        // Si es el módulo de reportes, inicializar
+        if (moduleKey === 'reportes' && typeof iniciarModuloReportes === 'function') {
+            iniciarModuloReportes();
+        }
+    } else {
+        // Módulo dinámico (pedidos, etc.) - llamar a loadModule
+        if (typeof loadModule === 'function') {
+            loadModule(moduleKey);
+        }
     }
 }
 /* =====================================================
@@ -244,6 +228,20 @@ function handleModuleClick(event) {
 
 function loadModule(moduleKey) {
     const main = document.querySelector('.app-main');
+    
+    // Ocultar la tarjeta principal si existe
+    const cardWide = main.querySelector('.card.card-wide:not(.module-section)');
+    if (cardWide) {
+        cardWide.style.display = 'none';
+    }
+
+    // Buscar o crear el contenedor dinámico
+    let dynamicContainer = document.getElementById('dynamic-module-container');
+    if (!dynamicContainer) {
+        dynamicContainer = document.createElement('div');
+        dynamicContainer.id = 'dynamic-module-container';
+        main.appendChild(dynamicContainer);
+    }
 
     switch (moduleKey) {
 
@@ -251,7 +249,7 @@ function loadModule(moduleKey) {
            MÓDULO 4: PEDIDOS
         ============================================ */
         case 'pedidos':
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Pedidos</h2>
 
@@ -282,7 +280,7 @@ function loadModule(moduleKey) {
            MÓDULO 8: CONFIGURACIÓN
         ============================================ */
         case 'configuracion':
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Configuración del Restaurante</h2>
 
@@ -321,26 +319,11 @@ function loadModule(moduleKey) {
             iniciarConfiguracion();
             break;
 
-        /* ============================================
-           MÓDULO: REPORTES
-        ============================================ */
-        case 'reportes':
-            main.innerHTML = `
-                <div class="card card-wide">
-                    <h2>Reportes del Restaurante</h2>
-                    <div id="reportes-container"></div>
-                </div>
-            `;
-
-            if (typeof iniciarModuloReportes === 'function') {
-                iniciarModuloReportes();
-            }
-            break;
-
         default:
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Módulo no encontrado</h2>
+                    <p>El módulo "${moduleKey}" no está disponible.</p>
                 </div>
             `;
     }
