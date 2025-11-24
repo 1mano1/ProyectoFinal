@@ -1,249 +1,168 @@
-// Usuarios de ejemplo (simulación de base de datos)
+// =====================================================
+// USUARIOS (SIMULACIÓN DE BASE DE DATOS)
+// =====================================================
 const USERS = [
-    {
-        email: 'mesero@restaurante.com',
-        password: '123456',
-        role: 'mesero',
-        name: 'Juan Pérez'
-    },
-    {
-        email: 'cajero@restaurante.com',
-        password: '123456',
-        role: 'cajero',
-        name: 'Ana López'
-    },
-    {
-        email: 'admin@restaurante.com',
-        password: 'admin123',
-        role: 'admin',
-        name: 'Administrador'
-    }
+    { email: 'mesero@restaurante.com', password: '123456', role: 'mesero', name: 'Juan Pérez' },
+    { email: 'cajero@restaurante.com', password: '123456', role: 'cajero', name: 'Ana López' },
+    { email: 'admin@restaurante.com', password: 'admin123', role: 'admin', name: 'Administrador' }
 ];
 
 let currentUser = null;
 
 document.addEventListener('deviceready', onDeviceReady, false);
-// Para probar en navegador también:
 document.addEventListener('DOMContentLoaded', onDeviceReady, false);
 
 function onDeviceReady() {
-    console.log('Device listo');
+    console.log("Device ready");
 
     const loginForm = document.getElementById('login-form');
     const btnLogout = document.getElementById('btn-logout');
     const navButtons = document.querySelectorAll('.nav-btn');
     const togglePasswordBtn = document.getElementById('toggle-password');
 
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    if (btnLogout) {
-        btnLogout.addEventListener('click', handleLogout);
-    }
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', handleModuleClick);
-    });
-    if (togglePasswordBtn) {
-        togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
-    }
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    if (btnLogout) btnLogout.addEventListener('click', handleLogout);
+    if (togglePasswordBtn) togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
 
-    // Intentar cargar credenciales guardadas
+    navButtons.forEach(btn => btn.addEventListener('click', handleModuleClick));
+
     loadRememberedCredentials();
 }
 
-/* ---------- LOGIN ---------- */
-
+// =====================================================
+// LOGIN
+// =====================================================
 function handleLogin(event) {
     event.preventDefault();
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const roleSelect = document.getElementById('role');
-    const rememberMe = document.getElementById('remember-me');
-    const errorBox = document.getElementById('login-error');
-
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    const role = roleSelect.value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+    const remember = document.getElementById('remember-me').checked;
 
     if (!email || !password || !role) {
-        showError('Por favor, completa todos los campos.');
-        return;
+        return showError("Completa todos los campos.");
     }
 
-    const user = USERS.find(
-        (u) => u.email === email && u.password === password && u.role === role
-    );
+    const user = USERS.find(u => u.email === email && u.password === password && u.role === role);
 
     if (!user) {
-        showError('Credenciales incorrectas o rol no coincide.');
-        return;
+        return showError("Credenciales incorrectas.");
     }
-
-    // Limpiar error
-    errorBox.classList.add('hidden');
-    errorBox.textContent = '';
 
     currentUser = user;
 
-    // Recordar credenciales
-    if (rememberMe.checked) {
+    // Guardar credenciales si marcó recordar
+    if (remember) {
         localStorage.setItem('remember_email', email);
         localStorage.setItem('remember_password', password);
         localStorage.setItem('remember_role', role);
         localStorage.setItem('remember_me', '1');
     } else {
-        localStorage.removeItem('remember_email');
-        localStorage.removeItem('remember_password');
-        localStorage.removeItem('remember_role');
-        localStorage.removeItem('remember_me');
+        localStorage.clear();
     }
 
     goToMenu();
 }
 
-function showError(message) {
+function showError(msg) {
     const errorBox = document.getElementById('login-error');
-    errorBox.textContent = message;
+    errorBox.textContent = msg;
     errorBox.classList.remove('hidden');
-    errorBox.classList.add('error');
 }
 
 function loadRememberedCredentials() {
-    const rememberFlag = localStorage.getItem('remember_me');
-    if (!rememberFlag) return;
+    if (!localStorage.getItem('remember_me')) return;
 
-    const email = localStorage.getItem('remember_email') || '';
-    const password = localStorage.getItem('remember_password') || '';
-    const role = localStorage.getItem('remember_role') || '';
-
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = password;
-    document.getElementById('role').value = role;
+    document.getElementById('email').value = localStorage.getItem('remember_email');
+    document.getElementById('password').value = localStorage.getItem('remember_password');
+    document.getElementById('role').value = localStorage.getItem('remember_role');
     document.getElementById('remember-me').checked = true;
 }
 
-/* Mostrar / ocultar contraseña */
-
 function togglePasswordVisibility() {
-    const passwordInput = document.getElementById('password');
-    const toggleBtn = document.getElementById('toggle-password');
-
-    if (!passwordInput) return;
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleBtn.textContent = '🙈';
+    const input = document.getElementById('password');
+    const btn = document.getElementById('toggle-password');
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
     } else {
-        passwordInput.type = 'password';
-        toggleBtn.textContent = '👁';
+        input.type = "password";
+        btn.textContent = "👁";
     }
 }
 
-/* ---------- NAVEGACIÓN ---------- */
-
+// =====================================================
+// NAVEGACIÓN Y VISUALIZACIÓN
+// =====================================================
 function goToMenu() {
-    const loginView = document.getElementById('login-view');
-    const menuView = document.getElementById('menu-view');
-    const userLabel = document.getElementById('user-label');
-    const roleLabel = document.getElementById('role-label');
+    document.getElementById('login-view').classList.remove('active');
+    document.getElementById('menu-view').classList.add('active');
 
-    if (currentUser) {
-        userLabel.textContent = `${currentUser.name} (${currentUser.email})`;
+    document.getElementById('user-label').textContent =
+        `${currentUser.name} (${currentUser.email})`;
 
-        let roleText = '';
-        switch (currentUser.role) {
-            case 'mesero':
-                roleText = 'Mesero';
-                break;
-            case 'cajero':
-                roleText = 'Cajero';
-                break;
-            case 'admin':
-                roleText = 'Administrador';
-                break;
-            default:
-                roleText = currentUser.role;
-        }
-        roleLabel.textContent = roleText;
-    }
-
-    loginView.classList.remove('active');
-    menuView.classList.add('active');
+    document.getElementById('role-label').textContent =
+        currentUser.role === 'mesero' ? 'Mesero'
+        : currentUser.role === 'cajero' ? 'Cajero'
+        : 'Administrador';
 }
 
 function handleLogout() {
     currentUser = null;
-
-    const loginView = document.getElementById('login-view');
-    const menuView = document.getElementById('menu-view');
-
-    menuView.classList.remove('active');
-    loginView.classList.add('active');
-
-    // Limpiar selección de menú
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    const moduleTitle = document.getElementById('module-title');
-    const moduleMessage = document.getElementById('module-message');
-    moduleTitle.textContent = 'Menú Principal';
-    moduleMessage.textContent = 'Selecciona un módulo en la barra superior para continuar.';
+    document.getElementById('menu-view').classList.remove('active');
+    document.getElementById('login-view').classList.add('active');
 }
-
-/* Cuando se selecciona un módulo de la barra superior */
 
 function handleModuleClick(event) {
     const moduleKey = event.currentTarget.getAttribute('data-module');
-    const moduleTitle = document.getElementById('module-title');
-    const moduleMessage = document.getElementById('module-message');
 
-    // Marcar botón activo
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    let nombreModulo = '';
-    switch (moduleKey) {
-        case 'mesas':
-            nombreModulo = 'Mesas';
-            break;
-        case 'pedidos':
-            nombreModulo = 'Pedidos';
-            break;
-        case 'cuentas':
-            nombreModulo = 'Cuentas / Cierre de cuentas';
-            break;
-        case 'reportes':
-            nombreModulo = 'Reportes';
-            break;
-        case 'configuracion':
-            nombreModulo = 'Configuración';
-            break;
-        default:
-            nombreModulo = 'Módulo';
-    }
+    // Ocultar todas las secciones de módulos estáticos
+    document.querySelectorAll('.module-section').forEach(section => {
+        section.classList.add('hidden');
+    });
 
-    // Actualizar título y mensaje si existen en el DOM (no se encuentran tras
-    // reemplazar `main.innerHTML` en algunos módulos).
-    if (moduleTitle) {
-        moduleTitle.textContent = nombreModulo;
-    }
-    if (moduleMessage) {
-        moduleMessage.textContent =
-            `Seleccionaste el módulo: ${nombreModulo}. ` +
-            'Esta sección será desarrollada en otros apartados del proyecto.';
-    }
-
-    // Renderizar el contenido completo del módulo (si existe una implementación)
-    if (typeof loadModule === 'function') {
-        loadModule(moduleKey);
+    // Verificar si existe una sección estática para este módulo
+    const moduleSection = document.getElementById(`mod-${moduleKey}`);
+    
+    if (moduleSection) {
+        // Módulo estático (reportes, cuentas, config)
+        moduleSection.classList.remove('hidden');
+        
+        // Si es el módulo de reportes, inicializar
+        if (moduleKey === 'reportes' && typeof iniciarModuloReportes === 'function') {
+            iniciarModuloReportes();
+        }
+    } else {
+        // Módulo dinámico (pedidos, etc.) - llamar a loadModule
+        if (typeof loadModule === 'function') {
+            loadModule(moduleKey);
+        }
     }
 }
-/* =====================================================
-   MÓDULOS DEL SISTEMA (PEDIDOS Y CONFIGURACIÓN)
-   TODO SE RENDERIZA EN EL MAIN DE index.html
-===================================================== */
 
+// =====================================================
+// SISTEMA DE MÓDULOS
+// =====================================================
 function loadModule(moduleKey) {
     const main = document.querySelector('.app-main');
+    
+    // Ocultar la tarjeta principal si existe
+    const cardWide = main.querySelector('.card.card-wide:not(.module-section)');
+    if (cardWide) {
+        cardWide.style.display = 'none';
+    }
+
+    // Buscar o crear el contenedor dinámico
+    let dynamicContainer = document.getElementById('dynamic-module-container');
+    if (!dynamicContainer) {
+        dynamicContainer = document.createElement('div');
+        dynamicContainer.id = 'dynamic-module-container';
+        main.appendChild(dynamicContainer);
+    }
 
     switch (moduleKey) {
 
@@ -279,14 +198,14 @@ function loadModule(moduleKey) {
            MÓDULO 4: PEDIDOS
         ============================================ */
         case 'pedidos':
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Pedidos</h2>
 
-                    <h3>Seleccionar Mesa</h3>
+                    <h3>Mesa:</h3>
                     <select id="mesaSelect"></select>
 
-                    <h3>Menú Digital</h3>
+                    <h3>Categoría del menú</h3>
                     <select id="categoriaSelect">
                         <option value="entradas">Entradas</option>
                         <option value="platos">Platos Fuertes</option>
@@ -299,10 +218,9 @@ function loadModule(moduleKey) {
                     <h3>Pedido actual</h3>
                     <div id="pedidoActual"></div>
 
-                    <button id="btnEnviarPedido" class="btn-primary">Enviar a Cocina</button>
+                    <button id="btnEnviarPedido" class="btn-primary">Enviar a cocina</button>
                 </div>
             `;
-
             iniciarModuloPedidos();
             break;
 
@@ -310,57 +228,56 @@ function loadModule(moduleKey) {
            MÓDULO 8: CONFIGURACIÓN
         ============================================ */
         case 'configuracion':
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Configuración del Restaurante</h2>
 
-                    <h3>Menú del Restaurante</h3>
-                    <button class="btn-primary" onclick="nuevoPlato()">Agregar Plato</button>
+                    <h3>Menú del restaurante</h3>
+                    <button onclick="nuevoPlato()" class="btn-primary">Agregar plato</button>
                     <div id="listaPlatos"></div>
 
                     <hr>
 
-                    <h3>Impuestos y Propinas</h3>
+                    <h3>Impuestos y propina</h3>
                     <label>Impuesto (%):</label>
                     <input type="number" id="impuestoInput">
 
                     <label>Propina sugerida (%):</label>
                     <input type="number" id="propinaInput">
-                    <button class="btn-primary" onclick="guardarImpuestos()">Guardar</button>
+                    <button onclick="guardarImpuestos()" class="btn-primary">Guardar</button>
 
                     <hr>
 
-                    <h3>Ticket</h3>
+                    <h3>Datos del Ticket</h3>
                     <label>Nombre del restaurante:</label>
                     <input type="text" id="nombreRestInput">
 
                     <label>Mensaje del ticket:</label>
                     <input type="text" id="mensajeTicketInput">
-                    <button class="btn-primary" onclick="guardarTicket()">Guardar</button>
+
+                    <button onclick="guardarTicket()" class="btn-primary">Guardar ticket</button>
 
                     <hr>
 
-                    <h3>Gestión de Usuarios</h3>
-                    <button class="btn-primary" onclick="agregarUsuario()">Nuevo Usuario</button>
+                    <h3>Gestión de usuarios</h3>
+                    <button onclick="agregarUsuario()" class="btn-primary">Nuevo usuario</button>
                     <div id="listaUsuarios"></div>
                 </div>
             `;
-
             iniciarConfiguracion();
             break;
 
         default:
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Módulo no encontrado</h2>
+                    <p>El módulo "${moduleKey}" no está disponible.</p>
                 </div>
             `;
     }
 }
 
-/* =====================================================
-   MÓDULO 3: MESAS
-===================================================== */
+
 
 let mesasData = JSON.parse(localStorage.getItem("mesasData")) || [
     { id: 1, nombre: "Mesa 1", estado: "disponible", clientes: 0, mesero: "" },
@@ -516,6 +433,7 @@ document.getElementById("btn-probar-mesas").addEventListener("click", () => {
      MÓDULO 4: LÓGICA DE PEDIDOS
 ===================================================== */
 
+
 let pedido = [];
 
 const mesas = [
@@ -555,14 +473,14 @@ function iniciarModuloPedidos() {
 }
 
 function cargarMesas() {
-    const select = document.getElementById("mesaSelect");
-    select.innerHTML = mesas.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
+    document.getElementById("mesaSelect").innerHTML =
+        mesas.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
 }
 
 function cargarMenu(cat) {
     const div = document.getElementById("listaProductos");
     div.innerHTML = menu[cat].map(p => `
-        <div>
+        <div class="item">
             <strong>${p.nombre}</strong> - $${p.precio}
             <button onclick="agregarAlPedido(${p.id}, '${p.nombre}', ${p.precio})">Añadir</button>
         </div>
@@ -584,9 +502,11 @@ function mostrarPedido() {
     }
 
     div.innerHTML = pedido.map((p, i) => `
-        <div>
+        <div class="item">
             <strong>${p.nombre}</strong> - $${p.precio}
-            <br>Cantidad: <input type="number" min="1" value="${p.cantidad}" onchange="actualizarCantidad(${i}, this.value)">
+            <br>Cantidad: 
+            <input type="number" min="1" value="${p.cantidad}" 
+                onchange="actualizarCantidad(${i}, this.value)">
             <br>Notas: ${p.instrucciones}
             <button onclick="eliminarDelPedido(${i})">Eliminar</button>
         </div>
@@ -608,15 +528,14 @@ function enviarPedido() {
         return;
     }
 
-    alert("Pedido enviado a cocina correctamente.");
+    alert("Pedido enviado a cocina.");
     pedido = [];
     mostrarPedido();
 }
 
-/* =====================================================
-   MÓDULO 8: CONFIGURACIÓN
-===================================================== */
-
+// =====================================================
+// MÓDULO 8 — CONFIGURACIÓN
+// =====================================================
 let platos = JSON.parse(localStorage.getItem("platos")) || [];
 let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
     { nombre: "Admin", rol: "Administrador" }
@@ -629,15 +548,13 @@ function iniciarConfiguracion() {
     cargarTicket();
 }
 
-/* ---------- PLATOS ---------- */
-
+// ---------- PLATOS ----------
 function cargarPlatos() {
     const div = document.getElementById("listaPlatos");
-    if (!div) return;
 
     div.innerHTML = platos.map((p, i) => `
-        <div>
-            <strong>${p.nombre}</strong> $${p.precio}
+        <div class="item">
+            <strong>${p.nombre}</strong> — $${p.precio}
             <br>${p.descripcion}
             <button onclick="editarPlato(${i})">Editar</button>
             <button onclick="eliminarPlato(${i})">Eliminar</button>
@@ -646,7 +563,7 @@ function cargarPlatos() {
 }
 
 function nuevoPlato() {
-    const nombre = prompt("Nombre:");
+    const nombre = prompt("Nombre del plato:");
     const precio = prompt("Precio:");
     const descripcion = prompt("Descripción:");
 
@@ -656,10 +573,9 @@ function nuevoPlato() {
 }
 
 function editarPlato(i) {
-    const p = platos[i];
-    p.nombre = prompt("Nuevo nombre:", p.nombre);
-    p.precio = prompt("Nuevo precio:", p.precio);
-    p.descripcion = prompt("Nueva descripción:", p.descripcion);
+    platos[i].nombre = prompt("Nuevo nombre:", platos[i].nombre);
+    platos[i].precio = prompt("Nuevo precio:", platos[i].precio);
+    platos[i].descripcion = prompt("Nueva descripción:", platos[i].descripcion);
 
     localStorage.setItem("platos", JSON.stringify(platos));
     cargarPlatos();
@@ -671,14 +587,13 @@ function eliminarPlato(i) {
     cargarPlatos();
 }
 
-/* ---------- IMPUESTOS ---------- */
-
+// ---------- IMPUESTOS ----------
 function guardarImpuestos() {
     const impuesto = document.getElementById("impuestoInput").value;
     const propina = document.getElementById("propinaInput").value;
 
     localStorage.setItem("impuestos", JSON.stringify({ impuesto, propina }));
-    alert("Guardado.");
+    alert("Guardado correctamente.");
 }
 
 function cargarImpuestos() {
@@ -689,8 +604,7 @@ function cargarImpuestos() {
     }
 }
 
-/* ---------- TICKET ---------- */
-
+// ---------- TICKET ----------
 function guardarTicket() {
     const nombre = document.getElementById("nombreRestInput").value;
     const mensaje = document.getElementById("mensajeTicketInput").value;
@@ -707,14 +621,12 @@ function cargarTicket() {
     }
 }
 
-/* ---------- USUARIOS ---------- */
-
+// ---------- USUARIOS ----------
 function cargarUsuarios() {
     const div = document.getElementById("listaUsuarios");
-    if (!div) return;
 
     div.innerHTML = usuarios.map((u, i) => `
-        <div>
+        <div class="item">
             <strong>${u.nombre}</strong> (${u.rol})
             <button onclick="editarUsuario(${i})">Editar</button>
             <button onclick="eliminarUsuario(${i})">Eliminar</button>
@@ -723,7 +635,7 @@ function cargarUsuarios() {
 }
 
 function agregarUsuario() {
-    const nombre = prompt("Nombre:");
+    const nombre = prompt("Nombre del usuario:");
     const rol = prompt("Rol:");
 
     usuarios.push({ nombre, rol });
@@ -732,9 +644,8 @@ function agregarUsuario() {
 }
 
 function editarUsuario(i) {
-    const u = usuarios[i];
-    u.nombre = prompt("Nuevo nombre:", u.nombre);
-    u.rol = prompt("Nuevo rol:", u.rol);
+    usuarios[i].nombre = prompt("Nuevo nombre:", usuarios[i].nombre);
+    usuarios[i].rol = prompt("Nuevo rol:", usuarios[i].rol);
 
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
     cargarUsuarios();

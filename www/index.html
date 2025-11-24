@@ -22,11 +22,8 @@
                 <label for="password">Contraseña</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" placeholder="••••••••" required />
-                    <button type="button" id="toggle-password" class="icon-button" aria-label="Mostrar u ocultar contraseña">
-                        👁
-                    </button>
+                    <button type="button" id="toggle-password" class="icon-button" aria-label="Mostrar u ocultar contraseña">👁</button>
                 </div>
-                <small class="hint">Pulsa el ojo para ver u ocultar la contraseña.</small>
 
                 <label for="role">Rol de usuario</label>
                 <select id="role" required>
@@ -48,10 +45,9 @@
         </div>
     </div>
 
-    <!-- Vista: Menú Principal -->
+    <!-- Vista Menú principal -->
     <div id="menu-view" class="view">
 
-        <!-- Barra superior con menú -->
         <header class="app-header">
             <div class="app-header-left">
                 <div class="app-title">Control de Restaurante</div>
@@ -75,17 +71,16 @@
             </div>
         </header>
 
-        <!-- Contenido principal -->
+        <!-- CONTENIDO PRINCIPAL -->
         <main class="app-main">
 
-            <!-- TARJETA PRINCIPAL -->
-            <div class="card card-wide">
+            <!-- MENSAJE CUANDO NO HAY MÓDULO SELECCIONADO -->
+            <div id="default-info" class="card card-wide">
                 <h2 id="module-title">Menú Principal</h2>
-                <p id="module-message" class="module-message">
-                    Selecciona un módulo en la barra superior para continuar.
-                </p>
+                <p class="module-message">Selecciona un módulo en la barra superior para continuar.</p>
             </div>
 
+<<<<<<< HEAD
             <!-- ===================== -->
             <!--  MÓDULO 3: MESAS      -->
             <!-- ===================== -->
@@ -103,52 +98,213 @@
             <!-- ===================== -->
             <section id="mod-cuentas" class="module-section hidden card card-wide">
                 <h2>Cuentas y Cierre</h2>
+=======
+            <!-- 🔵 MOD 5: CUENTAS -->
+            <section id="mod-cuentas" class="module-section hidden">
+                <div class="card card-wide">
+                    <h2>Cuentas / Cierre de Mesa</h2>
+>>>>>>> a5a1974e1625ddff859b63a19b868a79ca60bbbd
 
-                <label for="mesa-cuenta">Selecciona mesa:</label>
-                <select id="mesa-cuenta">
-                    <option value="">Seleccione una mesa</option>
-                    <option>Mesa 1</option>
-                    <option>Mesa 2</option>
-                    <option>Mesa 3</option>
-                </select>
+                    <label>Mesa:</label>
+                    <select id="cuentasMesaSelect"></select>
 
-                <button id="btn-cargar-cuenta" class="btn-primary">Cargar cuenta</button>
+                    <div id="cuentasDetalle" class="cuentas-detalle"></div>
 
-                <h3>Detalle de la cuenta</h3>
-                <ul id="lista-cuenta"></ul>
+                    <label>Propina:</label>
+                    <select id="cuentasPropina">
+                        <option value="0">Sin propina</option>
+                        <option value="0.1">10%</option>
+                        <option value="0.15">15%</option>
+                        <option value="0.2">20%</option>
+                    </select>
 
-                <p><strong>Total:</strong> $<span id="total-cuenta">0.00</span></p>
+                    <label>Método de pago:</label>
+                    <select id="cuentasPago">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
 
-                <button id="btn-cerrar-cuenta" class="btn-secondary">Cerrar Cuenta</button>
+                    <button id="btnCerrarCuenta" class="btn-primary">Cerrar Cuenta</button>
+                </div>
+            </section>
+
+            <!-- 🔵 MOD 8: CONFIGURACIÓN -->
+            <section id="mod-configuracion" class="module-section hidden">
+                <div class="card card-wide">
+                    <h2>Configuración del Sistema</h2>
+
+                    <h3>Menú del Restaurante</h3>
+                    <div id="configListaMenu"></div>
+
+                    <h3>Impuestos</h3>
+                    <input id="configImpuesto" type="number" min="0" max="30" placeholder="% impuesto" />
+
+                    <h3>Propina por defecto</h3>
+                    <input id="configPropinaDef" type="number" min="0" max="20" placeholder="% propina" />
+
+                    <h3>Datos del Ticket</h3>
+                    <input id="configNombreRest" placeholder="Nombre del restaurante" />
+                    <input id="configLogoURL" placeholder="URL del logotipo" />
+
+                    <button id="btnGuardarConfig" class="btn-primary">Guardar cambios</button>
+                </div>
             </section>
 
             <!-- ===================== -->
-            <!--  MÓDULO 8: CONFIG     -->
+            <!--  MÓDULO: REPORTES     -->
             <!-- ===================== -->
-            <section id="mod-configuracion" class="module-section hidden card card-wide">
-                <h2>Configuración del Sistema</h2>
+            <section id="mod-reportes" class="module-section hidden card card-wide">
+                <h2>Reportes del Restaurante</h2>
+                
+                <div class="reportes-tabs">
+                    <button class="tab-btn active" data-tab="ventas">
+                        📊 Ventas
+                    </button>
+                    <button class="tab-btn" data-tab="productos">
+                        🍽️ Productos
+                    </button>
+                    <button class="tab-btn" data-tab="meseros">
+                        👥 Meseros
+                    </button>
+                    <button class="tab-btn" data-tab="inventario">
+                        📦 Inventario
+                    </button>
+                </div>
 
-                <label for="nombre-restaurante">Nombre del restaurante</label>
-                <input type="text" id="nombre-restaurante" placeholder="Mi Restaurante" />
+                <!-- REPORTE DE VENTAS -->
+                <div id="tab-ventas" class="tab-content active">
+                    <div class="reporte-header">
+                        <h3>Resumen de Ventas</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-ventas">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarVentasExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarVentasPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="ventas-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
 
-                <label for="tema">Tema de la aplicación</label>
-                <select id="tema">
-                    <option value="claro">Claro</option>
-                    <option value="oscuro">Oscuro</option>
-                </select>
+                <!-- REPORTE DE PRODUCTOS -->
+                <div id="tab-productos" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Platos Más Vendidos</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-productos">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarProductosExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarProductosPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="productos-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
 
-                <label for="max-mesas">Cantidad de mesas</label>
-                <input type="number" id="max-mesas" min="1" value="10" />
+                <!-- REPORTE DE MESEROS -->
+                <div id="tab-meseros" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Desempeño de Meseros</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-meseros">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarMeserosExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarMeserosPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="meseros-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
 
-                <button id="btn-guardar-config" class="btn-primary">Guardar configuración</button>
-
-                <p id="mensaje-config" class="hidden success"></p>
+                <!-- REPORTE DE INVENTARIO -->
+                <div id="tab-inventario" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Control de Inventario</h3>
+                        <div class="reporte-filtros">
+                            <button class="btn-primary" onclick="abrirModalInsumo()">➕ Agregar Insumo</button>
+                            <button class="btn-export" onclick="exportarInventarioExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarInventarioPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="inventario-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
             </section>
 
         </main>
     </div>
+    <!-- MODAL PARA AGREGAR/EDITAR INSUMO (Módulo de Reportes) -->
+    <div id="modal-insumo" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-insumo-titulo">Agregar Insumo</h3>
+                <button class="modal-close" onclick="cerrarModalInsumo()" type="button">✕</button>
+            </div>
+            <form id="form-insumo" onsubmit="guardarInsumoModal(event)">
+                <div class="form-group">
+                    <label for="insumo-nombre">Nombre del Insumo *</label>
+                    <input type="text" id="insumo-nombre" required placeholder="Ej: Carne de res">
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-cantidad">Cantidad Actual *</label>
+                    <input type="number" id="insumo-cantidad" step="0.01" min="0" required placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-unidad">Unidad de Medida *</label>
+                    <select id="insumo-unidad" required>
+                        <option value="">Seleccione una unidad</option>
+                        <option value="kg">Kilogramos (kg)</option>
+                        <option value="g">Gramos (g)</option>
+                        <option value="lb">Libras (lb)</option>
+                        <option value="litros">Litros (L)</option>
+                        <option value="ml">Mililitros (ml)</option>
+                        <option value="pzas">Piezas (pzas)</option>
+                        <option value="cajas">Cajas</option>
+                        <option value="paquetes">Paquetes</option>
+                        <option value="bolsas">Bolsas</option>
+                        <option value="botellas">Botellas</option>
+                        <option value="latas">Latas</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-minimo">Cantidad Mínima *</label>
+                    <input type="number" id="insumo-minimo" step="0.01" min="0" required placeholder="0">
+                    <small class="form-hint">Se alertará cuando esté por debajo del mínimo</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-maximo">Cantidad Máxima *</label>
+                    <input type="number" id="insumo-maximo" step="0.01" min="0" required placeholder="0">
+                    <small class="form-hint">Capacidad máxima de almacenamiento</small>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalInsumo()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="cordova.js"></script>
+    <script src="js/reportesModulo.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
