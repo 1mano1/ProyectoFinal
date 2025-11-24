@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración del Restaurante</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/configuracion.js" defer></script>
+</head>
+
+<body>
+
+<h1>Módulo de Configuración</h1>
+
+<section>
+    <h2>Menú del Restaurante</h2>
+    <button onclick="mostrarFormularioNuevoPlato()">Agregar Plato</button>
+    <div id="listaPlatos"></div>
+</section>
+
+<hr>
+
+<section>
+    <h2>Impuestos y Propinas</h2>
+    <label>Impuesto (%):</label>
+    <input type="number" id="impuestoInput">
+    <br>
+    <label>Propina sugerida (%):</label>
+    <input type="number" id="propinaInput">
+    <br>
+    <button onclick="guardarImpuestos()">Guardar</button>
+</section>
+
+<hr>
+
+<section>
+    <h2>Personalización del Ticket</h2>
+    <label>Nombre del restaurante:</label>
+    <input type="text" id="nombreRestInput">
+    <br>
+    <label>Mensaje de Ticket:</label>
+    <input type="text" id="mensajeTicketInput">
+    <br>
+    <button onclick="guardarTicket()">Guardar</button>
+</section>
+
+<hr>
+
+<section>
+    <h2>Gestión de Usuarios y Roles</h2>
+    <button onclick="agregarUsuario()">Agregar Usuario</button>
+    <div id="listaUsuarios"></div>
+</section>
+
+</body>
+</html>
