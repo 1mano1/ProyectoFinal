@@ -133,9 +133,102 @@
                 <p id="mensaje-config" class="hidden success"></p>
             </section>
 
+            <!-- ===================== -->
+            <!--  MÓDULO: REPORTES     -->
+            <!-- ===================== -->
+            <section id="mod-reportes" class="module-section hidden card card-wide">
+                <h2>Reportes del Restaurante</h2>
+                
+                <div class="reportes-tabs">
+                    <button class="tab-btn active" data-tab="ventas">
+                        📊 Ventas
+                    </button>
+                    <button class="tab-btn" data-tab="productos">
+                        🍽️ Productos
+                    </button>
+                    <button class="tab-btn" data-tab="meseros">
+                        👥 Meseros
+                    </button>
+                    <button class="tab-btn" data-tab="inventario">
+                        📦 Inventario
+                    </button>
+                </div>
+
+                <!-- REPORTE DE VENTAS -->
+                <div id="tab-ventas" class="tab-content active">
+                    <div class="reporte-header">
+                        <h3>Resumen de Ventas</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-ventas">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarVentasExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarVentasPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="ventas-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- REPORTE DE PRODUCTOS -->
+                <div id="tab-productos" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Platos Más Vendidos</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-productos">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarProductosExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarProductosPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="productos-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- REPORTE DE MESEROS -->
+                <div id="tab-meseros" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Desempeño de Meseros</h3>
+                        <div class="reporte-filtros">
+                            <select id="periodo-meseros">
+                                <option value="diario">Hoy</option>
+                                <option value="semanal">Esta Semana</option>
+                                <option value="mensual">Este Mes</option>
+                            </select>
+                            <button class="btn-export" onclick="exportarMeserosExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarMeserosPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="meseros-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- REPORTE DE INVENTARIO -->
+                <div id="tab-inventario" class="tab-content">
+                    <div class="reporte-header">
+                        <h3>Control de Inventario</h3>
+                        <div class="reporte-filtros">
+                            <button class="btn-primary" onclick="abrirModalInsumo()">➕ Agregar Insumo</button>
+                            <button class="btn-export" onclick="exportarInventarioExcel()">📊 Excel</button>
+                            <button class="btn-export" onclick="exportarInventarioPDF()">📄 PDF</button>
+                        </div>
+                    </div>
+                    <div id="inventario-content" class="reporte-content">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
-
     <!-- MODAL PARA AGREGAR/EDITAR INSUMO (Módulo de Reportes) -->
     <div id="modal-insumo" class="modal" style="display: none;">
         <div class="modal-content">
