@@ -120,23 +120,57 @@ function handleModuleClick(event) {
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Cargar módulo real
-    loadModule(moduleKey);
+    // Ocultar todas las secciones de módulos estáticos
+    document.querySelectorAll('.module-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+
+    // Verificar si existe una sección estática para este módulo
+    const moduleSection = document.getElementById(`mod-${moduleKey}`);
+    
+    if (moduleSection) {
+        // Módulo estático (reportes, cuentas, config)
+        moduleSection.classList.remove('hidden');
+        
+        // Si es el módulo de reportes, inicializar
+        if (moduleKey === 'reportes' && typeof iniciarModuloReportes === 'function') {
+            iniciarModuloReportes();
+        }
+    } else {
+        // Módulo dinámico (pedidos, etc.) - llamar a loadModule
+        if (typeof loadModule === 'function') {
+            loadModule(moduleKey);
+        }
+    }
 }
 
 // =====================================================
 // SISTEMA DE MÓDULOS
 // =====================================================
 function loadModule(moduleKey) {
-    const main = document.querySelector(".app-main");
+    const main = document.querySelector('.app-main');
+    
+    // Ocultar la tarjeta principal si existe
+    const cardWide = main.querySelector('.card.card-wide:not(.module-section)');
+    if (cardWide) {
+        cardWide.style.display = 'none';
+    }
+
+    // Buscar o crear el contenedor dinámico
+    let dynamicContainer = document.getElementById('dynamic-module-container');
+    if (!dynamicContainer) {
+        dynamicContainer = document.createElement('div');
+        dynamicContainer.id = 'dynamic-module-container';
+        main.appendChild(dynamicContainer);
+    }
 
     switch (moduleKey) {
 
-        // =====================================================
-        // MÓDULO 4 — PEDIDOS
-        // =====================================================
-        case "pedidos":
-            main.innerHTML = `
+        /* ============================================
+           MÓDULO 4: PEDIDOS
+        ============================================ */
+        case 'pedidos':
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Pedidos</h2>
 
@@ -162,11 +196,11 @@ function loadModule(moduleKey) {
             iniciarModuloPedidos();
             break;
 
-        // =====================================================
-        // MÓDULO 8 — CONFIGURACIÓN
-        // =====================================================
-        case "configuracion":
-            main.innerHTML = `
+        /* ============================================
+           MÓDULO 8: CONFIGURACIÓN
+        ============================================ */
+        case 'configuracion':
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Configuración del Restaurante</h2>
 
@@ -206,7 +240,12 @@ function loadModule(moduleKey) {
             break;
 
         default:
-            main.innerHTML = `<p>Módulo no encontrado.</p>`;
+            dynamicContainer.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Módulo no encontrado</h2>
+                    <p>El módulo "${moduleKey}" no está disponible.</p>
+                </div>
+            `;
     }
 }
 
