@@ -221,10 +221,21 @@ function handleModuleClick(event) {
             nombreModulo = 'Módulo';
     }
 
-    moduleTitle.textContent = nombreModulo;
-    moduleMessage.textContent =
-        `Seleccionaste el módulo: ${nombreModulo}. ` +
-        'Esta sección será desarrollada en otros apartados del proyecto.';
+    // Actualizar título y mensaje si existen en el DOM (no se encuentran tras
+    // reemplazar `main.innerHTML` en algunos módulos).
+    if (moduleTitle) {
+        moduleTitle.textContent = nombreModulo;
+    }
+    if (moduleMessage) {
+        moduleMessage.textContent =
+            `Seleccionaste el módulo: ${nombreModulo}. ` +
+            'Esta sección será desarrollada en otros apartados del proyecto.';
+    }
+
+    // Renderizar el contenido completo del módulo (si existe una implementación)
+    if (typeof loadModule === 'function') {
+        loadModule(moduleKey);
+    }
 }
 /* =====================================================
    MÓDULOS DEL SISTEMA (PEDIDOS Y CONFIGURACIÓN)
