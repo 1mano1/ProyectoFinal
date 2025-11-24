@@ -22,11 +22,8 @@
                 <label for="password">Contraseña</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" placeholder="••••••••" required />
-                    <button type="button" id="toggle-password" class="icon-button" aria-label="Mostrar u ocultar contraseña">
-                        👁
-                    </button>
+                    <button type="button" id="toggle-password" class="icon-button" aria-label="Mostrar u ocultar contraseña">👁</button>
                 </div>
-                <small class="hint">Pulsa el ojo para ver u ocultar la contraseña.</small>
 
                 <label for="role">Rol de usuario</label>
                 <select id="role" required>
@@ -48,10 +45,9 @@
         </div>
     </div>
 
-    <!-- Vista: Menú Principal -->
+    <!-- Vista Menú principal -->
     <div id="menu-view" class="view">
 
-        <!-- Barra superior con menú -->
         <header class="app-header">
             <div class="app-header-left">
                 <div class="app-title">Control de Restaurante</div>
@@ -75,62 +71,64 @@
             </div>
         </header>
 
-        <!-- Contenido principal -->
+        <!-- CONTENIDO PRINCIPAL -->
         <main class="app-main">
 
-            <!-- TARJETA PRINCIPAL -->
-            <div class="card card-wide">
+            <!-- MENSAJE CUANDO NO HAY MÓDULO SELECCIONADO -->
+            <div id="default-info" class="card card-wide">
                 <h2 id="module-title">Menú Principal</h2>
-                <p id="module-message" class="module-message">
-                    Selecciona un módulo en la barra superior para continuar.
-                </p>
+                <p class="module-message">Selecciona un módulo en la barra superior para continuar.</p>
             </div>
 
-            <!-- ===================== -->
-            <!--  MÓDULO 4: CUENTAS    -->
-            <!-- ===================== -->
-            <section id="mod-cuentas" class="module-section hidden card card-wide">
-                <h2>Cuentas y Cierre</h2>
+            <!-- 🔵 MOD 5: CUENTAS -->
+            <section id="mod-cuentas" class="module-section hidden">
+                <div class="card card-wide">
+                    <h2>Cuentas / Cierre de Mesa</h2>
 
-                <label for="mesa-cuenta">Selecciona mesa:</label>
-                <select id="mesa-cuenta">
-                    <option value="">Seleccione una mesa</option>
-                    <option>Mesa 1</option>
-                    <option>Mesa 2</option>
-                    <option>Mesa 3</option>
-                </select>
+                    <label>Mesa:</label>
+                    <select id="cuentasMesaSelect"></select>
 
-                <button id="btn-cargar-cuenta" class="btn-primary">Cargar cuenta</button>
+                    <div id="cuentasDetalle" class="cuentas-detalle"></div>
 
-                <h3>Detalle de la cuenta</h3>
-                <ul id="lista-cuenta"></ul>
+                    <label>Propina:</label>
+                    <select id="cuentasPropina">
+                        <option value="0">Sin propina</option>
+                        <option value="0.1">10%</option>
+                        <option value="0.15">15%</option>
+                        <option value="0.2">20%</option>
+                    </select>
 
-                <p><strong>Total:</strong> $<span id="total-cuenta">0.00</span></p>
+                    <label>Método de pago:</label>
+                    <select id="cuentasPago">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
 
-                <button id="btn-cerrar-cuenta" class="btn-secondary">Cerrar Cuenta</button>
+                    <button id="btnCerrarCuenta" class="btn-primary">Cerrar Cuenta</button>
+                </div>
             </section>
 
-            <!-- ===================== -->
-            <!--  MÓDULO 8: CONFIG     -->
-            <!-- ===================== -->
-            <section id="mod-configuracion" class="module-section hidden card card-wide">
-                <h2>Configuración del Sistema</h2>
+            <!-- 🔵 MOD 8: CONFIGURACIÓN -->
+            <section id="mod-configuracion" class="module-section hidden">
+                <div class="card card-wide">
+                    <h2>Configuración del Sistema</h2>
 
-                <label for="nombre-restaurante">Nombre del restaurante</label>
-                <input type="text" id="nombre-restaurante" placeholder="Mi Restaurante" />
+                    <h3>Menú del Restaurante</h3>
+                    <div id="configListaMenu"></div>
 
-                <label for="tema">Tema de la aplicación</label>
-                <select id="tema">
-                    <option value="claro">Claro</option>
-                    <option value="oscuro">Oscuro</option>
-                </select>
+                    <h3>Impuestos</h3>
+                    <input id="configImpuesto" type="number" min="0" max="30" placeholder="% impuesto" />
 
-                <label for="max-mesas">Cantidad de mesas</label>
-                <input type="number" id="max-mesas" min="1" value="10" />
+                    <h3>Propina por defecto</h3>
+                    <input id="configPropinaDef" type="number" min="0" max="20" placeholder="% propina" />
 
-                <button id="btn-guardar-config" class="btn-primary">Guardar configuración</button>
+                    <h3>Datos del Ticket</h3>
+                    <input id="configNombreRest" placeholder="Nombre del restaurante" />
+                    <input id="configLogoURL" placeholder="URL del logotipo" />
 
-                <p id="mensaje-config" class="hidden success"></p>
+                    <button id="btnGuardarConfig" class="btn-primary">Guardar cambios</button>
+                </div>
             </section>
 
             <!-- ===================== -->
