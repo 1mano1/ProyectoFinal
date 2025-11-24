@@ -20,107 +20,24 @@ let datosInventario = [];
 ===================================================== */
 
 function iniciarModuloReportes() {
-    const container = document.getElementById('reportes-container');
-    if (!container) return;
-
     // Cargar datos desde localStorage u otros módulos
     cargarDatosReportes();
 
-    // Renderizar la interfaz completa
-    container.innerHTML = `
-        <div class="reportes-tabs">
-            <button class="tab-btn active" data-tab="ventas">
-                 Ventas
-            </button>
-            <button class="tab-btn" data-tab="productos">
-                 Productos
-            </button>
-            <button class="tab-btn" data-tab="meseros">
-                 Meseros
-            </button>
-            <button class="tab-btn" data-tab="inventario">
-                 Inventario
-            </button>
-        </div>
+    // Configurar event listeners solo la primera vez
+    if (!window.reportesModuloIniciado) {
+        configurarEventosReportes();
+        window.reportesModuloIniciado = true;
+    }
 
-        <!-- REPORTE DE VENTAS -->
-        <div id="tab-ventas" class="tab-content active">
-            <div class="reporte-header">
-                <h3>Resumen de Ventas</h3>
-                <div class="reporte-filtros">
-                    <select id="periodo-ventas">
-                        <option value="diario">Hoy</option>
-                        <option value="semanal">Esta Semana</option>
-                        <option value="mensual">Este Mes</option>
-                    </select>
-                    <button class="btn-export" onclick="exportarVentasExcel()">📊 Excel</button>
-                    <button class="btn-export" onclick="exportarVentasPDF()">📄 PDF</button>
-                </div>
-            </div>
-            <div id="ventas-content" class="reporte-content">
-                <!-- Se llenará dinámicamente -->
-            </div>
-        </div>
-
-        <!-- REPORTE DE PRODUCTOS -->
-        <div id="tab-productos" class="tab-content">
-            <div class="reporte-header">
-                <h3>Platos Más Vendidos</h3>
-                <div class="reporte-filtros">
-                    <select id="periodo-productos">
-                        <option value="diario">Hoy</option>
-                        <option value="semanal">Esta Semana</option>
-                        <option value="mensual">Este Mes</option>
-                    </select>
-                    <button class="btn-export" onclick="exportarProductosExcel()">📊 Excel</button>
-                    <button class="btn-export" onclick="exportarProductosPDF()">📄 PDF</button>
-                </div>
-            </div>
-            <div id="productos-content" class="reporte-content">
-                <!-- Se llenará dinámicamente -->
-            </div>
-        </div>
-
-        <!-- REPORTE DE MESEROS -->
-        <div id="tab-meseros" class="tab-content">
-            <div class="reporte-header">
-                <h3>Desempeño de Meseros</h3>
-                <div class="reporte-filtros">
-                    <select id="periodo-meseros">
-                        <option value="diario">Hoy</option>
-                        <option value="semanal">Esta Semana</option>
-                        <option value="mensual">Este Mes</option>
-                    </select>
-                    <button class="btn-export" onclick="exportarMeserosExcel()">📊 Excel</button>
-                    <button class="btn-export" onclick="exportarMeserosPDF()">📄 PDF</button>
-                </div>
-            </div>
-            <div id="meseros-content" class="reporte-content">
-                <!-- Se llenará dinámicamente -->
-            </div>
-        </div>
-
-        <!-- REPORTE DE INVENTARIO -->
-        <div id="tab-inventario" class="tab-content">
-            <div class="reporte-header">
-                <h3>Control de Inventario</h3>
-                <div class="reporte-filtros">
-                    <button class="btn-primary" onclick="abrirModalInsumo()">➕ Agregar Insumo</button>
-                    <button class="btn-export" onclick="exportarInventarioExcel()">📊 Excel</button>
-                    <button class="btn-export" onclick="exportarInventarioPDF()">📄 PDF</button>
-                </div>
-            </div>
-            <div id="inventario-content" class="reporte-content">
-                <!-- Se llenará dinámicamente -->
-            </div>
-        </div>
-    `;
-
-    // Configurar event listeners
-    configurarEventosReportes();
-
-    // Cargar el primer reporte por defecto
-    actualizarReporteVentas('diario');
+    // Actualizar el reporte actual visible
+    const tabActiva = document.querySelector('.tab-btn.active');
+    if (tabActiva) {
+        const tabName = tabActiva.getAttribute('data-tab');
+        cambiarTab(tabName);
+    } else {
+        // Por defecto cargar ventas
+        actualizarReporteVentas('diario');
+    }
 }
 
 /* =====================================================
