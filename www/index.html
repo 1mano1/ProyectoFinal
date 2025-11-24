@@ -43,9 +43,6 @@
                     </label>
                 </div>
 
-                <!-- Aquí se podría integrar biometría con un plugin de Cordova -->
-                <!-- <button type="button" id="btn-biometrico">Ingresar con huella</button> -->
-
                 <button type="submit" class="btn-primary">Iniciar sesión</button>
             </form>
         </div>
@@ -53,6 +50,7 @@
 
     <!-- Vista: Menú Principal -->
     <div id="menu-view" class="view">
+
         <!-- Barra superior con menú -->
         <header class="app-header">
             <div class="app-header-left">
@@ -79,12 +77,62 @@
 
         <!-- Contenido principal -->
         <main class="app-main">
+
+            <!-- TARJETA PRINCIPAL -->
             <div class="card card-wide">
                 <h2 id="module-title">Menú Principal</h2>
                 <p id="module-message" class="module-message">
                     Selecciona un módulo en la barra superior para continuar.
                 </p>
             </div>
+
+            <!-- ===================== -->
+            <!--  MÓDULO 4: CUENTAS    -->
+            <!-- ===================== -->
+            <section id="mod-cuentas" class="module-section hidden card card-wide">
+                <h2>Cuentas y Cierre</h2>
+
+                <label for="mesa-cuenta">Selecciona mesa:</label>
+                <select id="mesa-cuenta">
+                    <option value="">Seleccione una mesa</option>
+                    <option>Mesa 1</option>
+                    <option>Mesa 2</option>
+                    <option>Mesa 3</option>
+                </select>
+
+                <button id="btn-cargar-cuenta" class="btn-primary">Cargar cuenta</button>
+
+                <h3>Detalle de la cuenta</h3>
+                <ul id="lista-cuenta"></ul>
+
+                <p><strong>Total:</strong> $<span id="total-cuenta">0.00</span></p>
+
+                <button id="btn-cerrar-cuenta" class="btn-secondary">Cerrar Cuenta</button>
+            </section>
+
+            <!-- ===================== -->
+            <!--  MÓDULO 8: CONFIG     -->
+            <!-- ===================== -->
+            <section id="mod-configuracion" class="module-section hidden card card-wide">
+                <h2>Configuración del Sistema</h2>
+
+                <label for="nombre-restaurante">Nombre del restaurante</label>
+                <input type="text" id="nombre-restaurante" placeholder="Mi Restaurante" />
+
+                <label for="tema">Tema de la aplicación</label>
+                <select id="tema">
+                    <option value="claro">Claro</option>
+                    <option value="oscuro">Oscuro</option>
+                </select>
+
+                <label for="max-mesas">Cantidad de mesas</label>
+                <input type="number" id="max-mesas" min="1" value="10" />
+
+                <button id="btn-guardar-config" class="btn-primary">Guardar configuración</button>
+
+                <p id="mensaje-config" class="hidden success"></p>
+            </section>
+
         </main>
     </div>
 

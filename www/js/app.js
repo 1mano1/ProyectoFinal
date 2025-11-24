@@ -226,3 +226,329 @@ function handleModuleClick(event) {
         `Seleccionaste el módulo: ${nombreModulo}. ` +
         'Esta sección será desarrollada en otros apartados del proyecto.';
 }
+/* =====================================================
+   MÓDULOS DEL SISTEMA (PEDIDOS Y CONFIGURACIÓN)
+   TODO SE RENDERIZA EN EL MAIN DE index.html
+===================================================== */
+
+function loadModule(moduleKey) {
+    const main = document.querySelector('.app-main');
+
+    switch (moduleKey) {
+
+        /* ============================================
+           MÓDULO 4: PEDIDOS
+        ============================================ */
+        case 'pedidos':
+            main.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Pedidos</h2>
+
+                    <h3>Seleccionar Mesa</h3>
+                    <select id="mesaSelect"></select>
+
+                    <h3>Menú Digital</h3>
+                    <select id="categoriaSelect">
+                        <option value="entradas">Entradas</option>
+                        <option value="platos">Platos Fuertes</option>
+                        <option value="bebidas">Bebidas</option>
+                        <option value="postres">Postres</option>
+                    </select>
+
+                    <div id="listaProductos"></div>
+
+                    <h3>Pedido actual</h3>
+                    <div id="pedidoActual"></div>
+
+                    <button id="btnEnviarPedido" class="btn-primary">Enviar a Cocina</button>
+                </div>
+            `;
+
+            iniciarModuloPedidos();
+            break;
+
+        /* ============================================
+           MÓDULO 8: CONFIGURACIÓN
+        ============================================ */
+        case 'configuracion':
+            main.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Configuración del Restaurante</h2>
+
+                    <h3>Menú del Restaurante</h3>
+                    <button class="btn-primary" onclick="nuevoPlato()">Agregar Plato</button>
+                    <div id="listaPlatos"></div>
+
+                    <hr>
+
+                    <h3>Impuestos y Propinas</h3>
+                    <label>Impuesto (%):</label>
+                    <input type="number" id="impuestoInput">
+
+                    <label>Propina sugerida (%):</label>
+                    <input type="number" id="propinaInput">
+                    <button class="btn-primary" onclick="guardarImpuestos()">Guardar</button>
+
+                    <hr>
+
+                    <h3>Ticket</h3>
+                    <label>Nombre del restaurante:</label>
+                    <input type="text" id="nombreRestInput">
+
+                    <label>Mensaje del ticket:</label>
+                    <input type="text" id="mensajeTicketInput">
+                    <button class="btn-primary" onclick="guardarTicket()">Guardar</button>
+
+                    <hr>
+
+                    <h3>Gestión de Usuarios</h3>
+                    <button class="btn-primary" onclick="agregarUsuario()">Nuevo Usuario</button>
+                    <div id="listaUsuarios"></div>
+                </div>
+            `;
+
+            iniciarConfiguracion();
+            break;
+
+        default:
+            main.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Módulo no encontrado</h2>
+                </div>
+            `;
+    }
+}
+
+/* =====================================================
+     MÓDULO 4: LÓGICA DE PEDIDOS
+===================================================== */
+
+let pedido = [];
+
+const mesas = [
+    { id: 1, nombre: "Mesa 1" },
+    { id: 2, nombre: "Mesa 2" },
+    { id: 3, nombre: "Mesa 3" }
+];
+
+const menu = {
+    entradas: [
+        { id: 1, nombre: "Guacamole", precio: 50 },
+        { id: 2, nombre: "Nachos", precio: 70 }
+    ],
+    platos: [
+        { id: 3, nombre: "Tacos al pastor", precio: 90 },
+        { id: 4, nombre: "Enchiladas", precio: 85 }
+    ],
+    bebidas: [
+        { id: 5, nombre: "Refresco", precio: 20 },
+        { id: 6, nombre: "Agua de horchata", precio: 25 }
+    ],
+    postres: [
+        { id: 7, nombre: "Flan", precio: 30 },
+        { id: 8, nombre: "Pastel helado", precio: 40 }
+    ]
+};
+
+function iniciarModuloPedidos() {
+    cargarMesas();
+    cargarMenu("entradas");
+
+    document.getElementById("categoriaSelect")
+        .addEventListener("change", e => cargarMenu(e.target.value));
+
+    document.getElementById("btnEnviarPedido")
+        .addEventListener("click", enviarPedido);
+}
+
+function cargarMesas() {
+    const select = document.getElementById("mesaSelect");
+    select.innerHTML = mesas.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
+}
+
+function cargarMenu(cat) {
+    const div = document.getElementById("listaProductos");
+    div.innerHTML = menu[cat].map(p => `
+        <div>
+            <strong>${p.nombre}</strong> - $${p.precio}
+            <button onclick="agregarAlPedido(${p.id}, '${p.nombre}', ${p.precio})">Añadir</button>
+        </div>
+    `).join("");
+}
+
+function agregarAlPedido(id, nombre, precio) {
+    const instrucciones = prompt("Instrucciones especiales:");
+    pedido.push({ id, nombre, precio, cantidad: 1, instrucciones });
+    mostrarPedido();
+}
+
+function mostrarPedido() {
+    const div = document.getElementById("pedidoActual");
+
+    if (pedido.length === 0) {
+        div.innerHTML = "<p>No hay productos.</p>";
+        return;
+    }
+
+    div.innerHTML = pedido.map((p, i) => `
+        <div>
+            <strong>${p.nombre}</strong> - $${p.precio}
+            <br>Cantidad: <input type="number" min="1" value="${p.cantidad}" onchange="actualizarCantidad(${i}, this.value)">
+            <br>Notas: ${p.instrucciones}
+            <button onclick="eliminarDelPedido(${i})">Eliminar</button>
+        </div>
+    `).join("");
+}
+
+function actualizarCantidad(i, cantidad) {
+    pedido[i].cantidad = Number(cantidad);
+}
+
+function eliminarDelPedido(i) {
+    pedido.splice(i, 1);
+    mostrarPedido();
+}
+
+function enviarPedido() {
+    if (pedido.length === 0) {
+        alert("No hay nada para enviar.");
+        return;
+    }
+
+    alert("Pedido enviado a cocina correctamente.");
+    pedido = [];
+    mostrarPedido();
+}
+
+/* =====================================================
+   MÓDULO 8: CONFIGURACIÓN
+===================================================== */
+
+let platos = JSON.parse(localStorage.getItem("platos")) || [];
+let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
+    { nombre: "Admin", rol: "Administrador" }
+];
+
+function iniciarConfiguracion() {
+    cargarPlatos();
+    cargarUsuarios();
+    cargarImpuestos();
+    cargarTicket();
+}
+
+/* ---------- PLATOS ---------- */
+
+function cargarPlatos() {
+    const div = document.getElementById("listaPlatos");
+    if (!div) return;
+
+    div.innerHTML = platos.map((p, i) => `
+        <div>
+            <strong>${p.nombre}</strong> $${p.precio}
+            <br>${p.descripcion}
+            <button onclick="editarPlato(${i})">Editar</button>
+            <button onclick="eliminarPlato(${i})">Eliminar</button>
+        </div>
+    `).join("");
+}
+
+function nuevoPlato() {
+    const nombre = prompt("Nombre:");
+    const precio = prompt("Precio:");
+    const descripcion = prompt("Descripción:");
+
+    platos.push({ nombre, precio, descripcion });
+    localStorage.setItem("platos", JSON.stringify(platos));
+    cargarPlatos();
+}
+
+function editarPlato(i) {
+    const p = platos[i];
+    p.nombre = prompt("Nuevo nombre:", p.nombre);
+    p.precio = prompt("Nuevo precio:", p.precio);
+    p.descripcion = prompt("Nueva descripción:", p.descripcion);
+
+    localStorage.setItem("platos", JSON.stringify(platos));
+    cargarPlatos();
+}
+
+function eliminarPlato(i) {
+    platos.splice(i, 1);
+    localStorage.setItem("platos", JSON.stringify(platos));
+    cargarPlatos();
+}
+
+/* ---------- IMPUESTOS ---------- */
+
+function guardarImpuestos() {
+    const impuesto = document.getElementById("impuestoInput").value;
+    const propina = document.getElementById("propinaInput").value;
+
+    localStorage.setItem("impuestos", JSON.stringify({ impuesto, propina }));
+    alert("Guardado.");
+}
+
+function cargarImpuestos() {
+    const data = JSON.parse(localStorage.getItem("impuestos"));
+    if (data) {
+        document.getElementById("impuestoInput").value = data.impuesto;
+        document.getElementById("propinaInput").value = data.propina;
+    }
+}
+
+/* ---------- TICKET ---------- */
+
+function guardarTicket() {
+    const nombre = document.getElementById("nombreRestInput").value;
+    const mensaje = document.getElementById("mensajeTicketInput").value;
+
+    localStorage.setItem("ticket", JSON.stringify({ nombre, mensaje }));
+    alert("Ticket actualizado.");
+}
+
+function cargarTicket() {
+    const data = JSON.parse(localStorage.getItem("ticket"));
+    if (data) {
+        document.getElementById("nombreRestInput").value = data.nombre;
+        document.getElementById("mensajeTicketInput").value = data.mensaje;
+    }
+}
+
+/* ---------- USUARIOS ---------- */
+
+function cargarUsuarios() {
+    const div = document.getElementById("listaUsuarios");
+    if (!div) return;
+
+    div.innerHTML = usuarios.map((u, i) => `
+        <div>
+            <strong>${u.nombre}</strong> (${u.rol})
+            <button onclick="editarUsuario(${i})">Editar</button>
+            <button onclick="eliminarUsuario(${i})">Eliminar</button>
+        </div>
+    `).join("");
+}
+
+function agregarUsuario() {
+    const nombre = prompt("Nombre:");
+    const rol = prompt("Rol:");
+
+    usuarios.push({ nombre, rol });
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cargarUsuarios();
+}
+
+function editarUsuario(i) {
+    const u = usuarios[i];
+    u.nombre = prompt("Nuevo nombre:", u.nombre);
+    u.rol = prompt("Nuevo rol:", u.rol);
+
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cargarUsuarios();
+}
+
+function eliminarUsuario(i) {
+    usuarios.splice(i, 1);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cargarUsuarios();
+}
