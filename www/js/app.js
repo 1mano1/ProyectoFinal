@@ -248,6 +248,34 @@ function loadModule(moduleKey) {
     switch (moduleKey) {
 
         /* ============================================
+            MÓDULO 3: MESAS
+        ============================================ */
+        case 'mesas':
+            main.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Gestión de Mesas</h2>
+
+                    <div id="mesasContainer" class="mesas-grid"></div>
+
+                    <hr>
+
+                    <h3>Acciones con Mesas</h3>
+                    <label>Mesa 1:</label>
+                    <select id="mesaA"></select>
+
+                    <label>Mesa 2:</label>
+                    <select id="mesaB"></select>
+
+                    <button class="btn-primary" onclick="combinarMesas()">Combinar Mesas</button>
+                    <button class="btn-primary" onclick="dividirMesa()">Dividir Mesa</button>
+                </div>
+            `;
+
+            iniciarModuloMesas();
+            break;
+
+
+        /* ============================================
            MÓDULO 4: PEDIDOS
         ============================================ */
         case 'pedidos':
@@ -329,6 +357,160 @@ function loadModule(moduleKey) {
             `;
     }
 }
+
+/* =====================================================
+   MÓDULO 3: MESAS
+===================================================== */
+
+let mesasData = JSON.parse(localStorage.getItem("mesasData")) || [
+    { id: 1, nombre: "Mesa 1", estado: "disponible", clientes: 0, mesero: "" },
+    { id: 2, nombre: "Mesa 2", estado: "disponible", clientes: 0, mesero: "" },
+    { id: 3, nombre: "Mesa 3", estado: "disponible", clientes: 0, mesero: "" },
+    { id: 4, nombre: "Mesa 4", estado: "disponible", clientes: 0, mesero: "" }
+];
+
+function guardarMesas() {
+    localStorage.setItem("mesasData", JSON.stringify(mesasData));
+}
+
+function iniciarModuloMesas() {
+    renderMesas();
+    llenarSelectsMesas();
+}
+
+function renderMesas() {
+    const cont = document.getElementById("mesasContainer");
+
+    cont.innerHTML = mesasData.map(m => `
+        <div class="mesa-card mesa-${m.estado}">
+            <h3>${m.nombre}</h3>
+            <p><strong>Estado:</strong> ${m.estado}</p>
+            <p><strong>Clientes:</strong> ${m.clientes}</p>
+            <p><strong>Mesero:</strong> ${m.mesero || "No asignado"}</p>
+
+            <button onclick="asignarClientes(${m.id})">Asignar Clientes</button>
+            <button onclick="asignarMesero(${m.id})">Asignar Mesero</button>
+            <button onclick="cambiarEstadoMesa(${m.id})">Cambiar Estado</button>
+        </div>
+    `).join("");
+}
+
+/* -------- ASIGNAR CLIENTES -------- */
+
+function asignarClientes(id) {
+    const mesa = mesasData.find(m => m.id === id);
+    const clientes = prompt("Cantidad de clientes:", mesa.clientes);
+
+    if (clientes !== null) {
+        mesa.clientes = Number(clientes);
+        mesa.estado = clientes > 0 ? "ocupada" : "disponible";
+        guardarMesas();
+        renderMesas();
+    }
+}
+
+/* -------- ASIGNAR MESERO -------- */
+
+function asignarMesero(id) {
+    const mesa = mesasData.find(m => m.id === id);
+    const mesero = prompt("Nombre del mesero asignado:", mesa.mesero);
+
+    if (mesero !== null) {
+        mesa.mesero = mesero;
+        if (mesa.clientes > 0) mesa.estado = "ocupada";
+        guardarMesas();
+        renderMesas();
+    }
+}
+
+/* -------- CAMBIAR ESTADO -------- */
+
+function cambiarEstadoMesa(id) {
+    const mesa = mesasData.find(m => m.id === id);
+
+    const opciones = ["disponible", "ocupada", "en espera"];
+    const nuevoEstado = prompt(
+        "Estado:\n1. Disponible\n2. Ocupada\n3. En espera",
+        "1"
+    );
+
+    if (nuevoEstado >= 1 && nuevoEstado <= 3) {
+        mesa.estado = opciones[nuevoEstado - 1];
+        guardarMesas();
+        renderMesas();
+    }
+}
+
+/* -------- COMBINAR / DIVIDIR MESAS -------- */
+
+function llenarSelectsMesas() {
+    const a = document.getElementById("mesaA");
+    const b = document.getElementById("mesaB");
+
+    const options = mesasData.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
+
+    a.innerHTML = options;
+    b.innerHTML = options;
+}
+
+function combinarMesas() {
+    const idA = Number(document.getElementById("mesaA").value);
+    const idB = Number(document.getElementById("mesaB").value);
+
+    if (idA === idB) {
+        alert("No puedes combinar la misma mesa.");
+        return;
+    }
+
+    const mesaA = mesasData.find(m => m.id === idA);
+    const mesaB = mesasData.find(m => m.id === idB);
+
+    mesaA.clientes += mesaB.clientes;
+    mesaB.clientes = 0;
+    mesaB.estado = "disponible";
+
+    guardarMesas();
+    renderMesas();
+    alert("Mesas combinadas correctamente.");
+}
+
+function dividirMesa() {
+    const idA = Number(document.getElementById("mesaA").value);
+
+    const mesaA = mesasData.find(m => m.id === idA);
+
+    if (mesaA.clientes === 0) {
+        alert("La mesa no tiene clientes para dividir.");
+        return;
+    }
+
+    const clientesDiv = Math.floor(mesaA.clientes / 2);
+
+    mesaA.clientes -= clientesDiv;
+
+    // Buscar una mesa disponible
+    const mesaLibre = mesasData.find(m => m.estado === "disponible" && m.clientes === 0);
+
+    if (!mesaLibre) {
+        alert("No hay mesas libres para dividir.");
+        return;
+    }
+
+    mesaLibre.clientes = clientesDiv;
+    mesaLibre.estado = "ocupada";
+    mesaLibre.mesero = mesaA.mesero;
+
+    guardarMesas();
+    renderMesas();
+    alert("Mesa dividida correctamente.");
+}
+
+document.getElementById("btn-probar-mesas").addEventListener("click", () => {
+    document.getElementById("mensaje-prueba-mesas").innerText =
+        "El módulo de mesas está funcionando correctamente.";
+    console.log("Prueba de mesas ejecutada");
+});
+
 
 /* =====================================================
      MÓDULO 4: LÓGICA DE PEDIDOS
