@@ -136,7 +136,64 @@
         </main>
     </div>
 
+    <!-- MODAL PARA AGREGAR/EDITAR INSUMO (Módulo de Reportes) -->
+    <div id="modal-insumo" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-insumo-titulo">Agregar Insumo</h3>
+                <button class="modal-close" onclick="cerrarModalInsumo()" type="button">✕</button>
+            </div>
+            <form id="form-insumo" onsubmit="guardarInsumoModal(event)">
+                <div class="form-group">
+                    <label for="insumo-nombre">Nombre del Insumo *</label>
+                    <input type="text" id="insumo-nombre" required placeholder="Ej: Carne de res">
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-cantidad">Cantidad Actual *</label>
+                    <input type="number" id="insumo-cantidad" step="0.01" min="0" required placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-unidad">Unidad de Medida *</label>
+                    <select id="insumo-unidad" required>
+                        <option value="">Seleccione una unidad</option>
+                        <option value="kg">Kilogramos (kg)</option>
+                        <option value="g">Gramos (g)</option>
+                        <option value="lb">Libras (lb)</option>
+                        <option value="litros">Litros (L)</option>
+                        <option value="ml">Mililitros (ml)</option>
+                        <option value="pzas">Piezas (pzas)</option>
+                        <option value="cajas">Cajas</option>
+                        <option value="paquetes">Paquetes</option>
+                        <option value="bolsas">Bolsas</option>
+                        <option value="botellas">Botellas</option>
+                        <option value="latas">Latas</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-minimo">Cantidad Mínima *</label>
+                    <input type="number" id="insumo-minimo" step="0.01" min="0" required placeholder="0">
+                    <small class="form-hint">Se alertará cuando esté por debajo del mínimo</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="insumo-maximo">Cantidad Máxima *</label>
+                    <input type="number" id="insumo-maximo" step="0.01" min="0" required placeholder="0">
+                    <small class="form-hint">Capacidad máxima de almacenamiento</small>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalInsumo()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="cordova.js"></script>
+    <script src="js/reportesModulo.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

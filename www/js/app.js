@@ -321,6 +321,22 @@ function loadModule(moduleKey) {
             iniciarConfiguracion();
             break;
 
+        /* ============================================
+           MÓDULO: REPORTES
+        ============================================ */
+        case 'reportes':
+            main.innerHTML = `
+                <div class="card card-wide">
+                    <h2>Reportes del Restaurante</h2>
+                    <div id="reportes-container"></div>
+                </div>
+            `;
+
+            if (typeof iniciarModuloReportes === 'function') {
+                iniciarModuloReportes();
+            }
+            break;
+
         default:
             main.innerHTML = `
                 <div class="card card-wide">
