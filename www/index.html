@@ -80,30 +80,12 @@
                 <p class="module-message">Selecciona un módulo en la barra superior para continuar.</p>
             </div>
 
-
             <!-- ===================== -->
-            <!--  MÓDULO 3: MESAS      -->
+            <!--  MÓDULO 5: CUENTAS    -->
             <!-- ===================== -->
-            <section id="mod-mesas" class="module-section hidden card card-wide">
-                <h2>Mesas</h2>
-
-                <button id="btn-probar-mesas" class="btn-primary">Probar servicio de mesas</button>
-
-                <p id="mensaje-prueba-mesas"></p>
-            </section>
-
-
-            <!-- ===================== -->
-            <!--  MÓDULO 4: CUENTAS    -->
-            <!-- ===================== -->
-            <section id="mod-cuentas" class="module-section hidden card card-wide">
-                <h2>Cuentas y Cierre</h2>
-
-            <!-- 🔵 MOD 5: CUENTAS -->
             <section id="mod-cuentas" class="module-section hidden">
                 <div class="card card-wide">
                     <h2>Cuentas / Cierre de Mesa</h2>
-
 
                     <label>Mesa:</label>
                     <select id="cuentasMesaSelect"></select>
@@ -126,28 +108,6 @@
                     </select>
 
                     <button id="btnCerrarCuenta" class="btn-primary">Cerrar Cuenta</button>
-                </div>
-            </section>
-
-            <!-- 🔵 MOD 8: CONFIGURACIÓN -->
-            <section id="mod-configuracion" class="module-section hidden">
-                <div class="card card-wide">
-                    <h2>Configuración del Sistema</h2>
-
-                    <h3>Menú del Restaurante</h3>
-                    <div id="configListaMenu"></div>
-
-                    <h3>Impuestos</h3>
-                    <input id="configImpuesto" type="number" min="0" max="30" placeholder="% impuesto" />
-
-                    <h3>Propina por defecto</h3>
-                    <input id="configPropinaDef" type="number" min="0" max="20" placeholder="% propina" />
-
-                    <h3>Datos del Ticket</h3>
-                    <input id="configNombreRest" placeholder="Nombre del restaurante" />
-                    <input id="configLogoURL" placeholder="URL del logotipo" />
-
-                    <button id="btnGuardarConfig" class="btn-primary">Guardar cambios</button>
                 </div>
             </section>
 
@@ -247,6 +207,7 @@
 
         </main>
     </div>
+
     <!-- MODAL PARA AGREGAR/EDITAR INSUMO (Módulo de Reportes) -->
     <div id="modal-insumo" class="modal" style="display: none;">
         <div class="modal-content">

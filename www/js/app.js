@@ -8,11 +8,16 @@ const USERS = [
 ];
 
 let currentUser = null;
+let initialized = false;
 
 document.addEventListener('deviceready', onDeviceReady, false);
 document.addEventListener('DOMContentLoaded', onDeviceReady, false);
 
 function onDeviceReady() {
+    // Evitar doble inicialización (deviceready + DOMContentLoaded)
+    if (initialized) return;
+    initialized = true;
+
     console.log("Device ready");
 
     const loginForm = document.getElementById('login-form');
@@ -59,7 +64,10 @@ function handleLogin(event) {
         localStorage.setItem('remember_role', role);
         localStorage.setItem('remember_me', '1');
     } else {
-        localStorage.clear();
+        localStorage.removeItem('remember_email');
+        localStorage.removeItem('remember_password');
+        localStorage.removeItem('remember_role');
+        localStorage.removeItem('remember_me');
     }
 
     goToMenu();
@@ -74,9 +82,9 @@ function showError(msg) {
 function loadRememberedCredentials() {
     if (!localStorage.getItem('remember_me')) return;
 
-    document.getElementById('email').value = localStorage.getItem('remember_email');
-    document.getElementById('password').value = localStorage.getItem('remember_password');
-    document.getElementById('role').value = localStorage.getItem('remember_role');
+    document.getElementById('email').value = localStorage.getItem('remember_email') || '';
+    document.getElementById('password').value = localStorage.getItem('remember_password') || '';
+    document.getElementById('role').value = localStorage.getItem('remember_role') || '';
     document.getElementById('remember-me').checked = true;
 }
 
@@ -117,27 +125,40 @@ function handleLogout() {
 function handleModuleClick(event) {
     const moduleKey = event.currentTarget.getAttribute('data-module');
 
+    // Marcar botón activo
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Ocultar todas las secciones de módulos estáticos
+    // Ocultar tarjeta por defecto
+    const defaultCard = document.getElementById('default-info');
+    if (defaultCard) defaultCard.classList.add('hidden');
+
+    // Ocultar todas las secciones estáticas
     document.querySelectorAll('.module-section').forEach(section => {
         section.classList.add('hidden');
     });
 
-    // Verificar si existe una sección estática para este módulo
+    // Ocultar contenedor dinámico si existe
+    const dynamicContainer = document.getElementById('dynamic-module-container');
+    if (dynamicContainer) {
+        dynamicContainer.classList.add('hidden');
+    }
+
+    // ¿Hay una sección estática para este módulo?
     const moduleSection = document.getElementById(`mod-${moduleKey}`);
     
     if (moduleSection) {
-        // Módulo estático (reportes, cuentas, config)
+        // Módulo estático (cuentas, reportes, etc.)
         moduleSection.classList.remove('hidden');
-        
-        // Si es el módulo de reportes, inicializar
+
+        // Inicializar módulo de reportes si aplica
         if (moduleKey === 'reportes' && typeof iniciarModuloReportes === 'function') {
             iniciarModuloReportes();
         }
+
+        // Aquí podrías inicializar 'cuentas' si tienes lógica aparte
     } else {
-        // Módulo dinámico (pedidos, etc.) - llamar a loadModule
+        // Módulos dinámicos (mesas, pedidos, configuracion) -> loadModule
         if (typeof loadModule === 'function') {
             loadModule(moduleKey);
         }
@@ -145,16 +166,14 @@ function handleModuleClick(event) {
 }
 
 // =====================================================
-// SISTEMA DE MÓDULOS
+// SISTEMA DE MÓDULOS DINÁMICOS (Mesas, Pedidos, Configuración)
 // =====================================================
 function loadModule(moduleKey) {
     const main = document.querySelector('.app-main');
-    
-    // Ocultar la tarjeta principal si existe
-    const cardWide = main.querySelector('.card.card-wide:not(.module-section)');
-    if (cardWide) {
-        cardWide.style.display = 'none';
-    }
+
+    // Ocultar tarjeta por defecto
+    const defaultCard = document.getElementById('default-info');
+    if (defaultCard) defaultCard.classList.add('hidden');
 
     // Buscar o crear el contenedor dinámico
     let dynamicContainer = document.getElementById('dynamic-module-container');
@@ -164,13 +183,15 @@ function loadModule(moduleKey) {
         main.appendChild(dynamicContainer);
     }
 
+    dynamicContainer.classList.remove('hidden');
+
     switch (moduleKey) {
 
         /* ============================================
             MÓDULO 3: MESAS
         ============================================ */
         case 'mesas':
-            main.innerHTML = `
+            dynamicContainer.innerHTML = `
                 <div class="card card-wide">
                     <h2>Gestión de Mesas</h2>
 
@@ -189,10 +210,8 @@ function loadModule(moduleKey) {
                     <button class="btn-primary" onclick="dividirMesa()">Dividir Mesa</button>
                 </div>
             `;
-
             iniciarModuloMesas();
             break;
-
 
         /* ============================================
            MÓDULO 4: PEDIDOS
@@ -277,7 +296,9 @@ function loadModule(moduleKey) {
     }
 }
 
-
+// =====================================================
+// MÓDULO 3: LÓGICA DE MESAS
+// =====================================================
 
 let mesasData = JSON.parse(localStorage.getItem("mesasData")) || [
     { id: 1, nombre: "Mesa 1", estado: "disponible", clientes: 0, mesero: "" },
@@ -323,6 +344,7 @@ function asignarClientes(id) {
         mesa.estado = clientes > 0 ? "ocupada" : "disponible";
         guardarMesas();
         renderMesas();
+        llenarSelectsMesas();
     }
 }
 
@@ -337,6 +359,7 @@ function asignarMesero(id) {
         if (mesa.clientes > 0) mesa.estado = "ocupada";
         guardarMesas();
         renderMesas();
+        llenarSelectsMesas();
     }
 }
 
@@ -355,6 +378,7 @@ function cambiarEstadoMesa(id) {
         mesa.estado = opciones[nuevoEstado - 1];
         guardarMesas();
         renderMesas();
+        llenarSelectsMesas();
     }
 }
 
@@ -363,6 +387,8 @@ function cambiarEstadoMesa(id) {
 function llenarSelectsMesas() {
     const a = document.getElementById("mesaA");
     const b = document.getElementById("mesaB");
+
+    if (!a || !b) return;
 
     const options = mesasData.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
 
@@ -388,6 +414,7 @@ function combinarMesas() {
 
     guardarMesas();
     renderMesas();
+    llenarSelectsMesas();
     alert("Mesas combinadas correctamente.");
 }
 
@@ -419,20 +446,13 @@ function dividirMesa() {
 
     guardarMesas();
     renderMesas();
+    llenarSelectsMesas();
     alert("Mesa dividida correctamente.");
 }
 
-document.getElementById("btn-probar-mesas").addEventListener("click", () => {
-    document.getElementById("mensaje-prueba-mesas").innerText =
-        "El módulo de mesas está funcionando correctamente.";
-    console.log("Prueba de mesas ejecutada");
-});
-
-
-/* =====================================================
-     MÓDULO 4: LÓGICA DE PEDIDOS
-===================================================== */
-
+// =====================================================
+// MÓDULO 4: LÓGICA DE PEDIDOS
+// =====================================================
 
 let pedido = [];
 
@@ -507,7 +527,7 @@ function mostrarPedido() {
             <br>Cantidad: 
             <input type="number" min="1" value="${p.cantidad}" 
                 onchange="actualizarCantidad(${i}, this.value)">
-            <br>Notas: ${p.instrucciones}
+            <br>Notas: ${p.instrucciones || '—'}
             <button onclick="eliminarDelPedido(${i})">Eliminar</button>
         </div>
     `).join("");
@@ -536,6 +556,7 @@ function enviarPedido() {
 // =====================================================
 // MÓDULO 8 — CONFIGURACIÓN
 // =====================================================
+
 let platos = JSON.parse(localStorage.getItem("platos")) || [];
 let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
     { nombre: "Admin", rol: "Administrador" }
@@ -567,15 +588,17 @@ function nuevoPlato() {
     const precio = prompt("Precio:");
     const descripcion = prompt("Descripción:");
 
+    if (!nombre || !precio) return;
+
     platos.push({ nombre, precio, descripcion });
     localStorage.setItem("platos", JSON.stringify(platos));
     cargarPlatos();
 }
 
 function editarPlato(i) {
-    platos[i].nombre = prompt("Nuevo nombre:", platos[i].nombre);
-    platos[i].precio = prompt("Nuevo precio:", platos[i].precio);
-    platos[i].descripcion = prompt("Nueva descripción:", platos[i].descripcion);
+    platos[i].nombre = prompt("Nuevo nombre:", platos[i].nombre) ?? platos[i].nombre;
+    platos[i].precio = prompt("Nuevo precio:", platos[i].precio) ?? platos[i].precio;
+    platos[i].descripcion = prompt("Nueva descripción:", platos[i].descripcion) ?? platos[i].descripcion;
 
     localStorage.setItem("platos", JSON.stringify(platos));
     cargarPlatos();
@@ -638,14 +661,16 @@ function agregarUsuario() {
     const nombre = prompt("Nombre del usuario:");
     const rol = prompt("Rol:");
 
+    if (!nombre || !rol) return;
+
     usuarios.push({ nombre, rol });
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
     cargarUsuarios();
 }
 
 function editarUsuario(i) {
-    usuarios[i].nombre = prompt("Nuevo nombre:", usuarios[i].nombre);
-    usuarios[i].rol = prompt("Nuevo rol:", usuarios[i].rol);
+    usuarios[i].nombre = prompt("Nuevo nombre:", usuarios[i].nombre) ?? usuarios[i].nombre;
+    usuarios[i].rol = prompt("Nuevo rol:", usuarios[i].rol) ?? usuarios[i].rol;
 
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
     cargarUsuarios();
